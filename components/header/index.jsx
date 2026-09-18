@@ -4,31 +4,30 @@ import useLogout from "../../hooks/useLogout";
 
 export default function Header(props) {
   const logout = useLogout();
+
   return (
     <header className={styles.container}>
-      {props.isLoggedIn ? (
-        <>
-          <p>
-            <Link href="/">Home</Link>
-          </p>
-          <div className={styles.container}>
-            <p>Welcome, {props.username}!</p>
-            <p onClick={logout} style={{ cursor: "pointer" }}>
+      <p>
+        <Link href="/">Vitamaxing</Link>
+      </p>
+
+      <nav>
+        <Link href="/">Home</Link>
+
+        {props.isLoggedIn ? (
+          <>
+            <Link href="/dashboard">My Supplements</Link>
+            <span onClick={logout} style={{ cursor: "pointer" }}>
               Logout
-            </p>
-          </div>
-        </>
-      ) : (
-        <>
-          <p>
-            <Link href="/">Home</Link>
-          </p>
-          <p>
+            </span>
+          </>
+        ) : (
+          <>
             <Link href="/login">Login</Link>
-          </p>
-        </>
-      )}
+            <Link href="/signup">Create Account</Link>
+          </>
+        )}
+      </nav>
     </header>
   );
 }
-
