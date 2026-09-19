@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { useState } from "react";
+import Link from "next/link";
 import Header from "../components/header";
 
 export default function Home() {
@@ -80,7 +81,11 @@ export default function Home() {
 
           {results.map((result) => (
             <article key={result._id}>
-              <h3>{result._source.fullName}</h3>
+              <h3>
+                <Link href={`/supplements/${result._id}`}>
+                  {result._source.fullName}
+                </Link>
+              </h3>
 
               <p>
                 <strong>Brand:</strong> {result._source.brandName}
