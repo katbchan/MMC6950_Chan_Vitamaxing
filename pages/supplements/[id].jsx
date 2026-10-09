@@ -1,4 +1,3 @@
-
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -8,10 +7,12 @@ import Header from "../../components/header";
 export default function SupplementDetails() {
   const router = useRouter();
   const { id } = router.query;
-
   const [supplement, setSupplement] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
+  const [saveError, setSaveError] = useState("");
 
   useEffect(() => {
     if (!router.isReady || !id) return;
@@ -38,6 +39,35 @@ export default function SupplementDetails() {
 
     fetchSupplement();
   }, [router.isReady, id]);
+
+  async function handleAddSupplement() {
+    setSaving(true);
+    setSaveMessage("");
+    setSaveError("");
+
+    try {
+      const response = await fetch("/api/supplements/my-supplements", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ dsldId: id }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to save supplement.");
+      }
+
+      setSaveMessage("Supplement added to My Supplements!");
+    } catch (error) {
+      setSaveError(error.message);
+    } finally {
+      setSaving(false);
+    }
+  }
 
   const servingSize = supplement?.servingSizes?.[0];
   const ingredients = supplement?.ingredientRows || [];
@@ -125,9 +155,23 @@ export default function SupplementDetails() {
           </>
         )}
 
-        <button type="button" disabled>
-          Add to My Supplements (not implemented yet)
+        <button 
+          type="button" 
+          onClick={handleAddSupplement}
+          disabled={saving || loading || !supplement || !!error}
+        >
+          {saving
+            ? "Adding..."
+            : "Add to My Supplements"}
         </button>
+
+        {saveMessage && (
+          <p role="status">{saveMessage}</p>
+        )}
+
+        {saveError && (
+          <p role="alert">{saveError}</p>
+        )}
 
         <p>
           <Link href="/">Back to Search</Link>
