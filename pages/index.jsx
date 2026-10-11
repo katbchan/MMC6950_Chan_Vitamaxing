@@ -1,9 +1,26 @@
+
 import Head from "next/head";
 import { useState } from "react";
 import Link from "next/link";
+import { withIronSessionSsr } from "iron-session/next";
+import sessionOptions from "../config/session";
 import Header from "../components/header";
 
-export default function Home() {
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req }) {
+    const user = req.session.user;
+
+    return {
+      props: {
+        isLoggedIn: !!user,
+        username: user?.username || "",
+      },
+    };
+  },
+  sessionOptions
+);
+
+export default function Home(props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -49,7 +66,10 @@ export default function Home() {
         />
       </Head>
 
-      <Header isLoggedIn={false} />
+      <Header
+        isLoggedIn={props.isLoggedIn}
+        username={props.username}
+      />
 
       <main>
         <h1>Search for Supplements</h1>
@@ -73,7 +93,7 @@ export default function Home() {
 
           {loading && <p>Searching...</p>}
 
-          {error && <p>{error}</p>}
+          {error && <p role="alert">{error}</p>}
 
           {!loading && !error && results.length === 0 && (
             <p>No supplements searched yet.</p>

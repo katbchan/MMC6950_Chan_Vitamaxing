@@ -1,10 +1,27 @@
+
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { withIronSessionSsr } from "iron-session/next";
+import sessionOptions from "../../config/session";
 import Header from "../../components/header";
 
-export default function SupplementDetails() {
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req }) {
+    const user = req.session.user;
+
+    return {
+      props: {
+        isLoggedIn: !!user,
+        username: user?.username || "",
+      },
+    };
+  },
+  sessionOptions
+);
+
+export default function SupplementDetails(props) {
   const router = useRouter();
   const { id } = router.query;
   const [supplement, setSupplement] = useState(null);
@@ -13,6 +30,7 @@ export default function SupplementDetails() {
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
   const [saveError, setSaveError] = useState("");
+  const [listChoice, setListChoice] = useState("current");
 
   useEffect(() => {
     if (!router.isReady || !id) return;
@@ -46,12 +64,17 @@ export default function SupplementDetails() {
     setSaveError("");
 
     try {
-      const response = await fetch("/api/supplements/my-supplements", {
+      const response = await fetch(
+        "/api/supplements/my-supplements",
+        {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ dsldId: id }),
+          body: JSON.stringify({
+            dsldId: id,
+            status: listChoice,
+          }),
         }
       );
 
@@ -61,7 +84,11 @@ export default function SupplementDetails() {
         throw new Error(data.error || "Unable to save supplement.");
       }
 
-      setSaveMessage("Supplement added to My Supplements!");
+      setSaveMessage(
+        listChoice === "saved"
+          ? "Supplement added to Saved Supplements!"
+          : "Supplement added to Current Supplements!"
+      );
     } catch (error) {
       setSaveError(error.message);
     } finally {
@@ -86,7 +113,10 @@ export default function SupplementDetails() {
         />
       </Head>
 
-      <Header isLoggedIn={false} />
+      <Header
+        isLoggedIn={props.isLoggedIn}
+        username={props.username}
+      />
 
       <main>
         <h1>Supplement Details</h1>
@@ -152,26 +182,51 @@ export default function SupplementDetails() {
                 </>
               )}
             </section>
+
+            <section>
+              <h3>Add to My Supplements</h3>
+
+              <p>Choose which list to add this supplement to:</p>
+
+              <label>
+                <input
+                  type="radio"
+                  name="listChoice"
+                  value="current"
+                  checked={listChoice === "current"}
+                  onChange={() => setListChoice("current")}
+                />
+                Current Supplements
+              </label>
+
+              <br />
+
+              <label>
+                <input
+                  type="radio"
+                  name="listChoice"
+                  value="saved"
+                  checked={listChoice === "saved"}
+                  onChange={() => setListChoice("saved")}
+                />
+                Saved Supplements
+              </label>
+
+              <br />
+
+              <button
+                type="button"
+                onClick={handleAddSupplement}
+                disabled={saving || loading || !!error}
+              >
+                {saving ? "Adding..." : "Add to My Supplements"}
+              </button>
+            </section>
           </>
         )}
 
-        <button 
-          type="button" 
-          onClick={handleAddSupplement}
-          disabled={saving || loading || !supplement || !!error}
-        >
-          {saving
-            ? "Adding..."
-            : "Add to My Supplements"}
-        </button>
-
-        {saveMessage && (
-          <p role="status">{saveMessage}</p>
-        )}
-
-        {saveError && (
-          <p role="alert">{saveError}</p>
-        )}
+        {saveMessage && <p role="status">{saveMessage}</p>}
+        {saveError && <p role="alert">{saveError}</p>}
 
         <p>
           <Link href="/">Back to Search</Link>

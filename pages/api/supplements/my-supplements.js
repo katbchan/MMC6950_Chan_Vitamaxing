@@ -14,9 +14,9 @@ export default withIronSessionApiRoute(
       });
     }
 
-    // Only allow POST (add) and DELETE (remove).
-    if (!["POST", "DELETE"].includes(req.method)) {
-      res.setHeader("Allow", ["POST", "DELETE"]);
+    // Only allow POST (add), DELETE (remove), and PATCH (move).
+    if (!["POST", "DELETE", "PATCH"].includes(req.method)) {
+      res.setHeader("Allow", ["POST", "DELETE", "PATCH"]);
       return res.status(405).json({
         error: "Method not allowed.",
       });
@@ -69,6 +69,35 @@ export default withIronSessionApiRoute(
 
         return res.status(200).json({
           message: "Supplement removed successfully.",
+        });
+      }
+
+      // MOVE: Change the supplement's status.
+      if (req.method === "PATCH") {
+        const { status } = req.body;
+
+        if (!["current", "saved"].includes(status)) {
+          return res.status(400).json({
+            error: "Status must be current or saved.",
+          });
+        }
+
+        const supplement = user.supplements.find(
+          (item) => item.dsldId === id
+        );
+
+        if (!supplement) {
+          return res.status(404).json({
+            error: "Supplement not found in your list.",
+          });
+        }
+
+        supplement.status = status;
+        await user.save();
+
+        return res.status(200).json({
+          message: "Supplement moved successfully.",
+          status,
         });
       }
 
@@ -128,6 +157,7 @@ export default withIronSessionApiRoute(
               serving.notes ? ` (${serving.notes})` : ""
             }`
           : "",
+        status: req.body.status === "saved" ? "saved" : "current",
         ingredients,
         otherIngredients: (
           data.otheringredients?.ingredients || []

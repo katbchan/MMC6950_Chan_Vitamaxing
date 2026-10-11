@@ -3,17 +3,8 @@ import { Schema, model, models } from 'mongoose'
 import bcrypt from 'bcrypt'
 
 const UserSchema = new Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true,
-    minLength: 5,
-    maxLength: 200
-  },
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true, minLength: 5, maxLength: 200 },
   supplements: {
     type: [{
       dsldId: { type: String, required: true },
@@ -21,6 +12,11 @@ const UserSchema = new Schema({
       brandName: { type: String, default: '' },
       form: { type: String, default: '' },
       servingSize: { type: String, default: '' },
+      status: {
+        type: String,
+        enum: ['current', 'saved'],
+        default: 'current'
+      },
       ingredients: [{
         name: { type: String, required: true },
         ingredientId: { type: String, default: '' },
@@ -33,7 +29,6 @@ const UserSchema = new Schema({
   }
 })
 
-// Hash the password before it's stored in MongoDB.
 UserSchema.pre('save', async function(next) {
   if (this.isNew)
     this.password = await bcrypt.hash(this.password, 10)

@@ -12,7 +12,7 @@ export default function Header(props) {
       </p>
 
       <nav>
-        <Link href="/">Home</Link>
+        <Link href="/">Search Supplements</Link>
 
         {props.isLoggedIn ? (
           <>
