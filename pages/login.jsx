@@ -133,7 +133,7 @@ export default function Login(props) {
         </form>
 
         <p>
-          Don't have an account?{" "}
+          New Here?{" "}
           <Link href="/signup">Create an account</Link>
         </p>
       </main>
