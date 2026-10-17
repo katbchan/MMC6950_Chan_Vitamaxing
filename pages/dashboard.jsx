@@ -400,10 +400,6 @@ export default function Dashboard(props) {
         <section>
           <h2>Saved Supplement Overlaps</h2>
 
-          <p>
-            Compare saved supplements with your current supplements to detect overlapping ingredients.
-          </p>
-
           {savedOverlaps.length === 0 ? (
             <p>
               No overlapping ingredients detected between your
@@ -461,11 +457,6 @@ export default function Dashboard(props) {
               ))}
             </ul>
           )}
-
-          <p>
-            These warnings identify shared ingredients; they do
-            not determine whether a combination is safe or unsafe.
-          </p>
         </section>
 
         <section>
@@ -482,6 +473,10 @@ export default function Dashboard(props) {
 
         <p>
           <Link href="/">Search Supplements</Link>
+        </p>
+
+        <p>
+          <strong>Disclaimer:</strong> Overlap warnings identify shared ingredients only—they do not assess safety.
         </p>
       </main>
     </>

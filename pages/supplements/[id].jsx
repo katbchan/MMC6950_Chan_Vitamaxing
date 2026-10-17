@@ -226,7 +226,21 @@ export default function SupplementDetails(props) {
         )}
 
         {saveMessage && <p role="status">{saveMessage}</p>}
-        {saveError && <p role="alert">{saveError}</p>}
+        {saveError && (
+          <p role="alert">
+            {saveError === "Please log in first." ? (
+              <>
+                Please{" "}
+                <Link href={`/login?returnTo=${encodeURIComponent(`/supplements/${id}`)}`}>
+                  log in
+                </Link>{" "}
+                first to add this supplement.
+              </>
+            ) : (
+              saveError
+            )}
+          </p>
+        )}
 
         <p>
           <Link href="/">Back to Search</Link>
