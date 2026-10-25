@@ -27,7 +27,10 @@ async function login(req, res) {
       password: _,
       ...otherFields
     } = await db.auth.login(username, password)
-    req.session.user = otherFields
+    req.session.user = {
+      _id: otherFields._id,
+      username: otherFields.username,
+    }
     await req.session.save()
     res.status(200).end()
   } catch(err) {
@@ -45,7 +48,10 @@ async function signup(req, res) {
       password: _,
       ...otherFields
     } = await db.user.create(username, password)
-    req.session.user = otherFields
+    req.session.user = {
+      _id: otherFields._id,
+      username: otherFields.username,
+    }
     await req.session.save()
     res.redirect('/dashboard')
   } catch(err) {
