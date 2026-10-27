@@ -4,6 +4,7 @@ import Link from "next/link";
 import { withIronSessionSsr } from "iron-session/next";
 import sessionOptions from "../config/session";
 import Header from "../components/header";
+import styles from "../styles/Home.module.css";
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
@@ -142,24 +143,46 @@ export default function Home(props) {
         username={props.username}
       />
 
-      <main>
+      <main className="pageContent">
         <h1>Search for Supplements</h1>
 
-        <p>Search our supplement database.</p>
+        <p>Find supplements, see ingredients, and keep track of what’s in your routine.</p>
 
-        <form onSubmit={handleSearch}>
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Search for a supplement"
-            aria-label="Search for a supplement"
-          />
+        <form onSubmit={handleSearch} className={styles.searchForm}>
+          <div className={styles.searchInputWrapper}>
+            <span className={styles.searchIcon} aria-hidden="true">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="10.5" cy="10.5" r="7.5" />
+                <path d="m16 16 5 5" />
+              </svg>
+            </span>
 
-          <button type="submit">Search</button>
+            <input
+              type="text"
+              className={styles.searchInput}
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search by supplement name or brand..."
+              aria-label="Search by supplement name or brand"
+            />
+          </div>
+
+          <button type="submit" className={`buttonPrimary ${styles.searchButton}`}>
+            Search
+          </button>
         </form>
 
-        <section>
+        
+        <section className={styles.searchResults}>
           <h2>Search Results</h2>
 
           {loading && <p>Searching...</p>}
@@ -170,73 +193,99 @@ export default function Home(props) {
             <p>No supplements searched yet.</p>
           )}
 
-          {results.map((result) => {
-            const supplementId = result._id;
-            const feedback = addFeedback[supplementId];
-            const isAdding = !!adding[supplementId];
+          {results.length > 0 && (
+            <>
+              <p className={styles.resultsSummary}>
+                Showing results for “{searchTerm}”
+              </p>
 
-            return (
-              <article key={supplementId}>
-                <h3>
-                  <Link href={`/supplements/${supplementId}`}>
-                    {result._source.fullName}
-                  </Link>
-                </h3>
+              <div className={styles.resultsList}>
+                {results.map((result) => {
+                  const supplementId = result._id;
+                  const feedback = addFeedback[supplementId];
+                  const isAdding = !!adding[supplementId];
 
-                <p>
-                  <strong>Brand:</strong>{" "}
-                  {result._source.brandName || "Not available"}
-                </p>
+                  return (
+                    <article
+                      key={supplementId}
+                      className={styles.resultCard}
+                    >
+                      <div className={styles.productImage}>
+                        Product image
+                      </div>
 
-                <p>
-                  <strong>Form:</strong>{" "}
-                  {result._source.physicalState?.langualCodeDescription ||
-                    "Not available"}
-                </p>
+                      <div className={styles.resultInfo}>
+                        <h3 className={styles.resultTitle}>
+                          <Link href={`/supplements/${supplementId}`}>
+                            {result._source.fullName}
+                          </Link>
+                        </h3>
 
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => handleAddSupplement(result, "current")}
-                    disabled={isAdding}
-                  >
-                    {isAdding
-                      ? "Adding..."
-                      : "Add to Current Supplements"}
-                  </button>
+                        <p>
+                          <strong>Brand:</strong>{" "}
+                          {result._source.brandName || "Not available"}
+                        </p>
 
-                  <button
-                    type="button"
-                    onClick={() => handleAddSupplement(result, "saved")}
-                    disabled={isAdding}
-                  >
-                    {isAdding
-                      ? "Adding..."
-                      : "Add to Saved Supplements"}
-                  </button>
-                </div>
+                        <p>
+                          <strong>Form:</strong>{" "}
+                          {result._source.physicalState?.langualCodeDescription ||
+                            "Not available"}
+                        </p>
 
-                {feedback && (
-                  <p
-                    role={
-                      feedback.type === "error" ? "alert" : "status"
-                    }
-                  >
-                    {feedback.type === "login" ? (
-                      <>
-                        Please{" "}
-                        <Link href="/login">log in</Link>{" "}
-                        to add this supplement to your list.
-                      </>
-                    ) : (
-                      feedback.message
-                    )}
-                  </p>
-                )}
-              </article>
-            );
-          })}
+                        {feedback && (
+                          <p
+                            className={
+                              feedback.type === "error"
+                                ? styles.feedbackError
+                                : styles.feedbackMessage
+                            }
+                            role={
+                              feedback.type === "error" ? "alert" : "status"
+                            }
+                          >
+                            {feedback.type === "login" ? (
+                              <>
+                                Please <Link href="/login">log in</Link> to add
+                                this supplement to your list.
+                              </>
+                            ) : (
+                              feedback.message
+                            )}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className={styles.resultActions}>
+                        <button
+                          type="button"
+                          className={`buttonPrimary ${styles.addCurrentButton}`}
+                          onClick={() =>
+                            handleAddSupplement(result, "current")
+                          }
+                          disabled={isAdding}
+                        >
+                          {isAdding ? "Adding..." : "Add to Current"}
+                        </button>
+
+                        <button
+                          type="button"
+                          className={`buttonSecondary ${styles.addSavedButton}`}
+                          onClick={() =>
+                            handleAddSupplement(result, "saved")
+                          }
+                          disabled={isAdding}
+                        >
+                          {isAdding ? "Adding..." : "Add to Saved"}
+                        </button>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </section>
+
       </main>
     </>
   );

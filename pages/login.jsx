@@ -89,7 +89,7 @@ export default function Login(props) {
         isLoggedIn={props.isLoggedIn}
       />
 
-      <main>
+      <main className="pageContent">
         <h1>Welcome Back! </h1>
         <h2>Login to Your Account</h2>
 
@@ -125,7 +125,11 @@ export default function Login(props) {
             />
           </div>
 
-          <button type="submit" disabled={isSubmitting}>
+          <button
+            type="submit"
+            className="buttonPrimary"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Logging in..." : "Login"}
           </button>
 

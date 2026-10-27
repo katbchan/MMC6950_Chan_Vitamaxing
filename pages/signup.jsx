@@ -81,7 +81,7 @@ export default function Signup() {
 
       <Header isLoggedIn={false} />
 
-      <main>
+      <main className="pageContent">
         <h1>Create Account</h1>
 
         <p>
@@ -129,7 +129,11 @@ export default function Signup() {
             />
           </div>
 
-          <button type="submit" disabled={isSubmitting}>
+          <button
+            type="submit"
+            className="buttonPrimary"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Creating Account..." : "Create Account"}
           </button>
 

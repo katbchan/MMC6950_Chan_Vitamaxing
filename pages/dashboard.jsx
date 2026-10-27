@@ -329,7 +329,7 @@ export default function Dashboard(props) {
         username={props.username}
       />
 
-      <main>
+      <main className="pageContent">
         <h1>My Supplements</h1>
 
         <p>

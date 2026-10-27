@@ -2,12 +2,140 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 24px;
+  padding: 16px 5%;
+  background-color: #ffffff;
 }
 
-.container nav {
+.logoLink {
   display: flex;
   align-items: center;
-  gap: 16px;
+  flex-shrink: 0;
+}
+
+.logo {
+  display: block;
+  width: 180px;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24px;
   flex-wrap: wrap;
+}
+
+.navLink {
+  display: inline-block;
+  padding: 8px 0 6px;
+  border-bottom: 2px solid transparent;
+  color: #49832e;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 0.2s ease;
+}
+
+.navLink:hover {
+  border-bottom-color: #fed060;
+}
+
+.active {
+  border-bottom-color: #fed060;
+}
+
+.logoutButton {
+  padding: 8px 0 6px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: #49832e;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.logoutButton:hover {
+  border-bottom-color: #fed060;
+}
+
+.navLink:focus-visible,
+.logoLink:focus-visible,
+.logoutButton:focus-visible {
+  outline: 2px solid #49832e;
+  outline-offset: 4px;
+}
+
+.menuToggle {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .container {
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 5%;
+  }
+
+  .logo {
+    width: 150px;
+  }
+
+  .menuToggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .menuToggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: #49832e;
+    border-radius: 2px;
+  }
+
+  .menuToggle:focus-visible {
+    outline: 2px solid #49832e;
+    outline-offset: 3px;
+  }
+
+  .nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 5% 20px;
+    background-color: #ffffff;
+    border-top: 1px solid #f2e4d4;
+  }
+
+  .nav.navOpen {
+    display: flex;
+  }
+
+  .navLink,
+  .logoutButton {
+    font-size: 14px;
+  }
 }
