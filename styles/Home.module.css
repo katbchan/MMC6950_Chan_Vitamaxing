@@ -2,7 +2,7 @@
   display: flex;
   width: 100%;
   max-width: 1035px;
-  min-height: 56px;
+  min-height: 48px;
   margin: 26px 0 0;
 }
 
@@ -12,7 +12,7 @@
   align-items: center;
   min-width: 0;
   gap: 12px;
-  padding: 0 18px;
+  padding: 0 14px;
   background-color: #ffffff;
   border: 1px solid #49832e;
   border-right: none;
@@ -29,11 +29,12 @@
 .searchInput {
   width: 100%;
   min-width: 0;
-  padding: 12px 0;
+  padding: 10px 0;
   border: none;
   outline: none;
   background: transparent;
   font-size: 16px;
+  color: #49832e
 }
 
 .searchInput::placeholder {
@@ -43,10 +44,10 @@
 
 .searchButton {
   flex-shrink: 0;
-  min-width: 150px;
-  padding: 12px 24px;
+  min-width: 100px;
+  padding: 8px 16px;
   border-radius: 0 8px 8px 0;
-  font-size: 20px;
+  font-size: 14px;
 }
 
 .searchResults {
@@ -133,10 +134,10 @@
 .addCurrentButton,
 .addSavedButton {
   width: 100%;
-  min-height: 40px;
-  padding: 7px 12px;
+  min-height: 32px;
+  padding: 5px 8px;
   border-radius: 9px;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .feedbackMessage,

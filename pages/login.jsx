@@ -97,9 +97,10 @@ export default function Login(props) {
           Log in to access your personal supplement lists and
           ingredient overlap warnings.
         </p>
-
-        <form onSubmit={handleLogin}>
-          <div>
+        
+        
+        <form onSubmit={handleLogin} className="authForm">
+          <div className="authField">
             <label htmlFor="username">Username:</label>
             <input
               type="text"
@@ -112,7 +113,7 @@ export default function Login(props) {
             />
           </div>
 
-          <div>
+          <div className="authField">
             <label htmlFor="password">Password:</label>
             <input
               type="password"
@@ -136,9 +137,12 @@ export default function Login(props) {
           {error && <p role="alert">{error}</p>}
         </form>
 
+
         <p>
           New Here?{" "}
-          <Link href="/signup">Create an account</Link>
+          <Link href="/signup" className="authLink">
+            Create an account
+          </Link>
         </p>
       </main>
     </>

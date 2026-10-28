@@ -89,8 +89,9 @@ export default function Signup() {
           for ingredient overlaps.
         </p>
 
-        <form onSubmit={handleCreateAccount}>
-          <div>
+        
+        <form onSubmit={handleCreateAccount} className="authForm">
+          <div className="authField">
             <label htmlFor="username">Username:</label>
             <input
               type="text"
@@ -103,7 +104,7 @@ export default function Signup() {
             />
           </div>
 
-          <div>
+          <div className="authField">
             <label htmlFor="password">Password:</label>
             <input
               type="password"
@@ -116,7 +117,7 @@ export default function Signup() {
             />
           </div>
 
-          <div>
+          <div className="authField">
             <label htmlFor="confirm-password">Confirm Password:</label>
             <input
               type="password"
@@ -140,8 +141,12 @@ export default function Signup() {
           {error && <p role="alert">{error}</p>}
         </form>
 
+
         <p>
-          Already have an account? <Link href="/login">Log in</Link>
+          Already have an account?{" "} 
+          <Link href="/login" className="authLink">
+            Log in
+          </Link>
         </p>
       </main>
     </>
