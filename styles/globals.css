@@ -98,9 +98,6 @@ select {
   cursor: not-allowed;
 }
 
-
-/* Login and Create Account Forms */
-
 .authForm {
   display: flex;
   flex-direction: column;
@@ -144,7 +141,7 @@ select {
   margin-top: 4px;
 }
 
-.authLink {
+.directLink {
   color: #49832e;
   text-decoration: underline;
   text-decoration-color: #fed060;
@@ -152,8 +149,132 @@ select {
   text-underline-offset: 5px;
 }
 
-.authLink:hover {
+.directLink:hover {
   color: #e38226;
+}
+
+.supplementDetails {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.supplementTitle {
+  grid-column: 1 / -1;
+}
+
+.productImage {
+  grid-column: 1;
+  grid-row: 2;
+  background-color: #ffffff;
+  border: 1px solid #49832e;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.productImage img {
+  width: 100%;
+  max-width: 250px;
+  height: 250px;
+  object-fit: contain;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  max-width: 250px;
+  height: 250px;
+  background-color: #f2e4d4;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #49832e;
+}
+
+.productInfo {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.ingredientsCard {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+
+.otherIngredientsCard {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.addSupplementCard {
+  grid-column: 1 / -1;
+}
+
+.detailCard {
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #49832e;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.detailCard h3 {
+  color: #e43d32;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.detailCard p {
+  color: #49832e;
+  margin: 8px 0;
+}
+
+.detailCard ul {
+  color: #49832e;
+  padding-left: 24px;
+  margin-bottom: 0;
+}
+
+.detailCard li {
+  margin-bottom: 8px;
+}
+
+.listChoice {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.listChoice label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #49832e;
+}
+
+.listChoice input {
+  accent-color: #49832e;
+}
+
+.detailCard button {
+  margin-top: 8px;
+}
+
+.addSupplementButtons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.addSupplementButtons button {
+  width: 100%;
+  margin-top: 0;
 }
 
 @media (max-width: 640px) {
@@ -174,6 +295,32 @@ select {
 
   .authField input {
     min-height: 48px;
+  }
+
+  .supplementDetails {
+    grid-template-columns: 1fr;
+  }
+
+  .supplementTitle,
+  .productImage,
+  .productInfo,
+  .ingredientsCard,
+  .otherIngredientsCard,
+  .addSupplementCard {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .addSupplementButtons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+  }
+
+  .addSupplementButtons button {
+    width: 100%;
+    margin-top: 0;
   }
 }
 

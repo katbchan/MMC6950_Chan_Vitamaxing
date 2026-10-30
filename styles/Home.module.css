@@ -152,6 +152,13 @@
 .feedbackMessage a {
   color: #49832e;
   text-decoration: underline;
+  text-decoration-color: #fed060;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+}
+
+.feedbackMessage a:hover {
+  color: #e38226;
 }
 
 @media (max-width: 640px) {

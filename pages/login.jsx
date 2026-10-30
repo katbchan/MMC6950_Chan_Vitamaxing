@@ -140,7 +140,7 @@ export default function Login(props) {
 
         <p>
           New Here?{" "}
-          <Link href="/signup" className="authLink">
+          <Link href="/signup" className="directLink">
             Create an account
           </Link>
         </p>

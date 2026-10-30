@@ -144,7 +144,7 @@ export default function Signup() {
 
         <p>
           Already have an account?{" "} 
-          <Link href="/login" className="authLink">
+          <Link href="/login" className="directLink">
             Log in
           </Link>
         </p>

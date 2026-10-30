@@ -231,28 +231,6 @@ export default function Home(props) {
                           {result._source.physicalState?.langualCodeDescription ||
                             "Not available"}
                         </p>
-
-                        {feedback && (
-                          <p
-                            className={
-                              feedback.type === "error"
-                                ? styles.feedbackError
-                                : styles.feedbackMessage
-                            }
-                            role={
-                              feedback.type === "error" ? "alert" : "status"
-                            }
-                          >
-                            {feedback.type === "login" ? (
-                              <>
-                                Please <Link href="/login">log in</Link> to add
-                                this supplement to your list.
-                              </>
-                            ) : (
-                              feedback.message
-                            )}
-                          </p>
-                        )}
                       </div>
 
                       <div className={styles.resultActions}>
@@ -277,6 +255,27 @@ export default function Home(props) {
                         >
                           {isAdding ? "Adding..." : "Add to Saved"}
                         </button>
+
+                        {feedback && (
+                          <p
+                            className={
+                              feedback.type === "error"
+                                ? styles.feedbackError
+                                : styles.feedbackMessage
+                            }
+                            role={
+                              feedback.type === "error" ? "alert" : "status"
+                            }
+                          >
+                            {feedback.type === "login" ? (
+                              <>
+                                Please <Link href="/login">log in</Link> to add supplement to your list.
+                              </>
+                            ) : (
+                              feedback.message
+                            )}
+                          </p>
+                        )}
                       </div>
                     </article>
                   );

@@ -1,4 +1,3 @@
-
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -58,7 +57,7 @@ export default function SupplementDetails(props) {
     fetchSupplement();
   }, [router.isReady, id]);
 
-  async function handleAddSupplement() {
+  async function handleAddSupplement(status) {
     setSaving(true);
     setSaveMessage("");
     setSaveError("");
@@ -73,7 +72,7 @@ export default function SupplementDetails(props) {
           },
           body: JSON.stringify({
             dsldId: id,
-            status: listChoice,
+            status: status,
           }),
         }
       );
@@ -85,7 +84,7 @@ export default function SupplementDetails(props) {
       }
 
       setSaveMessage(
-        listChoice === "saved"
+        status === "saved"
           ? "Supplement added to Saved Supplements!"
           : "Supplement added to Current Supplements!"
       );
@@ -118,7 +117,7 @@ export default function SupplementDetails(props) {
         username={props.username}
       />
 
-      <main>
+      <main className="pageContent">
         <h1>Supplement Details</h1>
 
         {loading && <p>Loading supplement details...</p>}
@@ -127,51 +126,72 @@ export default function SupplementDetails(props) {
 
         {!loading && !error && supplement && (
           <>
-            <h2>{supplement.fullName}</h2>
+            <div className="supplementDetails">
+              <div className="productImage">
+                {supplement.thumbnail ? (
+                  <img
+                    src={supplement.thumbnail}
+                    alt={supplement.fullName}
+                  />
+                ) : (
+                  <div className="imagePlaceholder">
+                    Product image
+                  </div>
+                )}
+              </div>
+              
+              <h2 className="supplementTitle">{supplement.fullName}</h2>
 
-            <section>
-              <h3>Product Information</h3>
-              <p>Brand: {supplement.brandName || "Not available"}</p>
-              <p>
-                Serving Size:{" "}
-                {servingSize
-                  ? `${servingSize.minQuantity}${
-                      servingSize.unit ? ` ${servingSize.unit}` : ""
-                    }${servingSize.notes ? ` (${servingSize.notes})` : ""}`
-                  : "Not available"}
-              </p>
-              <p>
-                Form:{" "}
-                {supplement.physicalState?.langualCodeDescription ||
-                  "Not available"}
-              </p>
-            </section>
+              <section className="detailCard productInfo">
+                <h3>Product Information</h3>
 
-            <section>
-              <h3>Ingredients</h3>
+                <p>
+                  <strong>Brand:</strong> {supplement.brandName || "Not available"}
+                </p>
 
-              {ingredients.length > 0 ? (
-                <ul>
-                  {ingredients.map((ingredient) => {
-                    const quantity = ingredient.quantity?.[0];
+                <p>
+                  <strong>Serving Size:</strong>{" "}
+                  {servingSize
+                    ? `${servingSize.minQuantity}${
+                        servingSize.unit ? ` ${servingSize.unit}` : ""
+                      }${servingSize.notes ? ` (${servingSize.notes})` : ""}`
+                    : "Not available"}
+                </p>
 
-                    return (
-                      <li key={ingredient.ingredientId}>
-                        {ingredient.name}
-                        {quantity
-                          ? ` — ${quantity.quantity} ${quantity.unit}`
-                          : ""}
-                      </li>
-                    );
-                  })}
-                </ul>
-              ) : (
-                <p>No ingredient information available.</p>
-              )}
+                <p>
+                  <strong>Form:</strong>{" "}
+                  {supplement.physicalState?.langualCodeDescription ||
+                    "Not available"}
+                </p>
+              </section>
+
+              <section className="detailCard ingredientsCard">
+                <h3>Ingredients</h3>
+
+                {ingredients.length > 0 ? (
+                  <ul>
+                    {ingredients.map((ingredient) => {
+                      const quantity = ingredient.quantity?.[0];
+
+                      return (
+                        <li key={ingredient.ingredientId}>
+                          {ingredient.name}
+                          {quantity
+                            ? ` — ${quantity.quantity} ${quantity.unit}`
+                            : ""}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <p>No ingredient information available.</p>
+                )}
+              </section>
 
               {otherIngredients.length > 0 && (
-                <>
-                  <h4>Other Ingredients</h4>
+                <section className="detailCard otherIngredientsCard">
+                  <h3>Other Ingredients</h3>
+
                   <ul>
                     {otherIngredients.map((ingredient) => (
                       <li key={ingredient.ingredientId}>
@@ -179,71 +199,61 @@ export default function SupplementDetails(props) {
                       </li>
                     ))}
                   </ul>
-                </>
+                </section>
               )}
-            </section>
 
-            <section>
-              <h3>Add to My Supplements</h3>
+              <section className="detailCard addSupplementCard">
+                <h3>Add to My Supplements</h3>
 
-              <p>Choose which list to add this supplement to:</p>
+                <div className="addSupplementButtons">
+                  <button
+                    type="button"
+                    className="buttonPrimary"
+                    onClick={() => {
+                      setListChoice("current");
+                      handleAddSupplement("current");
+                    }}
+                    disabled={saving}
+                  >
+                    Add to Current
+                  </button>
 
-              <label>
-                <input
-                  type="radio"
-                  name="listChoice"
-                  value="current"
-                  checked={listChoice === "current"}
-                  onChange={() => setListChoice("current")}
-                />
-                Current Supplements
-              </label>
+                  <button
+                    type="button"
+                    className="buttonSecondary"
+                    onClick={() => {
+                      setListChoice("saved");
+                      handleAddSupplement("saved");
+                    }}
+                    disabled={saving}
+                  >
+                    Add to Saved
+                  </button>
 
-              <br />
-
-              <label>
-                <input
-                  type="radio"
-                  name="listChoice"
-                  value="saved"
-                  checked={listChoice === "saved"}
-                  onChange={() => setListChoice("saved")}
-                />
-                Saved Supplements
-              </label>
-
-              <br />
-
-              <button
-                type="button"
-                onClick={handleAddSupplement}
-                disabled={saving || loading || !!error}
-              >
-                {saving ? "Adding..." : "Add to My Supplements"}
-              </button>
-            </section>
+                  {saveMessage && <p role="status">{saveMessage}</p>}
+                  {saveError && (
+                    <p role="alert">
+                      {saveError === "Please log in first." ? (
+                        <>
+                          Please{" "}
+                          <Link href={`/login?returnTo=${encodeURIComponent(`/supplements/${id}`)}`} className="directLink">
+                            log in
+                          </Link>{" "}
+                          first to add this supplement.
+                        </>
+                      ) : (
+                        saveError
+                      )}
+                    </p>
+                  )}
+                </div>
+              </section>
+            </div>
           </>
-        )}
-
-        {saveMessage && <p role="status">{saveMessage}</p>}
-        {saveError && (
-          <p role="alert">
-            {saveError === "Please log in first." ? (
-              <>
-                Please{" "}
-                <Link href={`/login?returnTo=${encodeURIComponent(`/supplements/${id}`)}`}>
-                  log in
-                </Link>{" "}
-                first to add this supplement.
-              </>
-            ) : (
-              saveError
-            )}
-          </p>
-        )}
+          )}
 
         <p>
-          <Link href="/">Back to Search</Link>
+          <Link href="/" className="directLink">Back to Search</Link>
         </p>
       </main>
     </>
