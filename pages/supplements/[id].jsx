@@ -128,17 +128,22 @@ export default function SupplementDetails(props) {
           <>
             <div className="supplementDetails">
               <div className="productImage">
-                {supplement.thumbnail ? (
-                  <img
-                    src={supplement.thumbnail}
-                    alt={supplement.fullName}
-                  />
-                ) : (
-                  <div className="imagePlaceholder">
-                    Product image
-                  </div>
-                )}
-              </div>
+                <img
+                  src={`https://dsldapi.od.nih.gov/s3/pdf/thumbnails/${supplement.id}.jpg`}
+                  alt={supplement.fullName}
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                    e.currentTarget.nextElementSibling.style.display = "flex";
+                  }}
+                />
+
+                <div
+                    className="imagePlaceholder"
+                    style={{ display: "none" }}
+                >
+                    Product image unavailable
+                </div>
+            </div>
               
               <h2 className="supplementTitle">{supplement.fullName}</h2>
 

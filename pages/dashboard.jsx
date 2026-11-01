@@ -46,95 +46,89 @@ function normalizeIngredientName(name) {
   return (name || "").trim().replace(/\s+/g, " ").toLowerCase();
 }
 
-function findIngredientOverlaps(supplements) {
-  const ingredientMap = new Map();
+function findSupplementOverlaps(supplements) {
+  const overlaps = [];
 
-  supplements.forEach((supplement) => {
-    (supplement.ingredients || []).forEach((ingredient) => {
-      const key = normalizeIngredientName(ingredient.name);
+  supplements.forEach((supplement, index) => {
+    supplements.slice(index + 1).forEach((otherSupplement) => {
+      const sharedIngredients = [];
 
-      if (!key) return;
+      (supplement.ingredients || []).forEach((ingredient) => {
+        const matchingIngredient = (otherSupplement.ingredients || []).find(
+          (other) =>
+            normalizeIngredientName(other.name) ===
+            normalizeIngredientName(ingredient.name)
+        );
 
-      if (!ingredientMap.has(key)) {
-        ingredientMap.set(key, {
-          name: ingredient.name.trim(),
-          supplements: [],
+        if (matchingIngredient) {
+          sharedIngredients.push(ingredient.name.trim());
+        }
+      });
+
+      if (sharedIngredients.length > 0) {
+        overlaps.push({
+          dsldId: supplement.dsldId,
+          fullName: supplement.fullName,
+          overlaps: [
+            {
+              dsldId: otherSupplement.dsldId,
+              fullName: otherSupplement.fullName,
+              ingredients: sharedIngredients,
+            },
+          ],
         });
       }
-
-      ingredientMap.get(key).supplements.push({
-        dsldId: supplement.dsldId,
-        fullName: supplement.fullName,
-        quantity: ingredient.quantity,
-        unit: ingredient.unit,
-      });
     });
   });
 
-  return Array.from(ingredientMap.values()).filter(
-    (ingredient) => ingredient.supplements.length > 1
-  );
+  return overlaps;
 }
 
 function findSavedSupplementOverlaps(
   currentSupplements,
   savedSupplements
 ) {
-  const currentIngredients = new Map();
+  const overlaps = [];
 
-  currentSupplements.forEach((supplement) => {
-    (supplement.ingredients || []).forEach((ingredient) => {
-      const key = normalizeIngredientName(ingredient.name);
+  savedSupplements.forEach((savedSupplement) => {
+    const supplementOverlaps = [];
 
-      if (!key) return;
+    currentSupplements.forEach((currentSupplement) => {
+      const sharedIngredients = [];
 
-      if (!currentIngredients.has(key)) {
-        currentIngredients.set(key, {
-          name: ingredient.name.trim(),
-          supplements: [],
-        });
-      }
+      (savedSupplement.ingredients || []).forEach((ingredient) => {
+        const matchingIngredient = (currentSupplement.ingredients || []).find(
+          (other) =>
+            normalizeIngredientName(other.name) ===
+            normalizeIngredientName(ingredient.name)
+        );
 
-      const existing = currentIngredients.get(key);
+        if (matchingIngredient) {
+          sharedIngredients.push(ingredient.name.trim());
+        }
+      });
 
-      if (
-        !existing.supplements.some(
-          (item) => item.dsldId === supplement.dsldId
-        )
-      ) {
-        existing.supplements.push({
-          dsldId: supplement.dsldId,
-          fullName: supplement.fullName,
-          quantity: ingredient.quantity,
-          unit: ingredient.unit,
+      if (sharedIngredients.length > 0) {
+        supplementOverlaps.push({
+          dsldId: currentSupplement.dsldId,
+          fullName: currentSupplement.fullName,
+          ingredients: sharedIngredients,
         });
       }
     });
+
+    if (supplementOverlaps.length > 0) {
+      overlaps.push({
+        dsldId: savedSupplement.dsldId,
+        fullName: savedSupplement.fullName,
+        overlaps: supplementOverlaps,
+      });
+    }
   });
 
-  return savedSupplements.map((savedSupplement) => {
-    const overlaps = new Map();
-
-    (savedSupplement.ingredients || []).forEach((ingredient) => {
-      const key = normalizeIngredientName(ingredient.name);
-
-      if (!key || !currentIngredients.has(key)) return;
-
-      overlaps.set(key, {
-        name: currentIngredients.get(key).name,
-        currentSupplements: currentIngredients.get(key).supplements,
-        savedQuantity: ingredient.quantity,
-        savedUnit: ingredient.unit,
-      });
-    });
-
-    return {
-      dsldId: savedSupplement.dsldId,
-      fullName: savedSupplement.fullName,
-      overlaps: Array.from(overlaps.values()),
-    };
-  }).filter((savedSupplement) => savedSupplement.overlaps.length > 0);
+  return overlaps;
 }
+
 
 export default function Dashboard(props) {
   const [supplements, setSupplements] = useState(
@@ -233,66 +227,70 @@ export default function Dashboard(props) {
     const isSaved = supplement.status === "saved";
 
     return (
-      <li key={supplement.dsldId}>
-        <h3>{supplement.fullName}</h3>
+      <li className="supplementCard" key={supplement.dsldId}>
+        <div className="supplementInfo">
+          <h3>{supplement.fullName}</h3>
 
-        <p>
-          Brand: {supplement.brandName || "Not available"}
-        </p>
+          <p>
+            Brand: {supplement.brandName || "Not available"}
+          </p>
 
-        <p>
-          Form: {supplement.form || "Not available"}
-        </p>
+          <p>
+            Form: {supplement.form || "Not available"}
+          </p>
 
-        <p>
-          Serving Size:{" "}
-          {supplement.servingSize || "Not available"}
-        </p>
+          <p>
+            Serving Size:{" "}
+            {supplement.servingSize || "Not available"}
+          </p>
 
-        <p>
-          Ingredients: {supplement.ingredients?.length || 0}
-        </p>
+          <p>
+            Ingredients: {supplement.ingredients?.length || 0}
+          </p>
 
-        <p>
-          <Link href={`/supplements/${supplement.dsldId}`}>
-            View Details
-          </Link>
-        </p>
+          <p>
+            <Link href ={`/supplements/${supplement.dsldId}`} className="directLink">
+              View Details
+            </Link>
+          </p>
+        </div>
 
-        <button
-          type="button"
-          onClick={() =>
-            handleMove(
-              supplement.dsldId,
-              isSaved ? "current" : "saved"
-            )
-          }
-          disabled={
-            movingId === supplement.dsldId ||
-            removingId === supplement.dsldId
-          }
-        >
-          {movingId === supplement.dsldId
-            ? "Moving..."
-            : isSaved
-              ? "Move to Current Supplements"
-              : "Move to Saved Supplements"}
-        </button>
+        <div className="supplementActions">
+          <button
+            className="buttonPrimary"
+            type="button"
+            onClick={() =>
+              handleMove(
+                supplement.dsldId,
+                isSaved ? "current" : "saved"
+              )
+            }
+            disabled={
+              movingId === supplement.dsldId ||
+              removingId === supplement.dsldId
+            }
+          >
+            {movingId === supplement.dsldId
+              ? "Moving..."
+              : isSaved
+                ? "Move to Current"
+                : "Move to Saved"}
+          </button>
 
-        {" "}
-
-        <button
-          type="button"
-          onClick={() => handleRemove(supplement.dsldId)}
-          disabled={
-            removingId === supplement.dsldId ||
-            movingId === supplement.dsldId
-          }
-        >
-          {removingId === supplement.dsldId
-            ? "Removing..."
-            : "Remove"}
-        </button>
+          <button
+            className="buttonSecondary"
+            type="button"
+            onClick={() => handleRemove(supplement.dsldId)}
+            disabled={
+              removingId === supplement.dsldId ||
+              movingId === supplement.dsldId
+            }
+          >
+            {removingId === supplement.dsldId
+              ? "Removing..."
+              : "Remove"}
+          </button>
+        </div>
       </li>
     );
   }
@@ -305,8 +303,8 @@ export default function Dashboard(props) {
     (supplement) => supplement.status === "saved"
   );
 
-  const currentOverlaps = findIngredientOverlaps(
-    currentSupplements
+  const currentOverlaps = findSupplementOverlaps(
+  currentSupplements
   );
 
   const savedOverlaps = findSavedSupplementOverlaps(
@@ -337,57 +335,74 @@ export default function Dashboard(props) {
           saved supplements here.
         </p>
 
+        <p>
+          <Link href="/" className="directLink">Search Supplements</Link>
+        </p>
         {message && <p role="status">{message}</p>}
         {error && <p role="alert">{error}</p>}
 
-        <section>
+        <section className="dashboardSection">
           <h2>Current Supplement Overlaps</h2>
 
-          {currentOverlaps.length === 0 ? (
-            <p>
-              No overlapping ingredients detected among your
-              current supplements.
-            </p>
-          ) : (
-            <>
-              <p>
-                The following ingredients appear in more than
-                one current supplement:
+          <div className="overlapCard"> 
+            {currentOverlaps.length === 0 ? (
+              <p className="overlapStatus success">
+                <span className="statusIcon">✓</span>
+                No overlapping ingredients detected among your
+                current supplements.
               </p>
+            ) : (
+              <>
+                <p className="overlapSummary">
+                  <span className="statusIcon warning">⚠</span>
+                  <span>
+                  The following ingredients appear in more than
+                  one current supplement:
+                  </span>
+                </p>
 
-              <ul>
-                {currentOverlaps.map((overlap) => (
-                  <li key={normalizeIngredientName(overlap.name)}>
-                    <h3>{overlap.name}</h3>
+                <ul className="overlapDetails">
+                  {currentOverlaps.map((supplement) => (
+                    <li key={supplement.dsldId}>
+                      <h3>
+                        <Link href={`/supplements/${supplement.dsldId}`}>
+                          {supplement.fullName}
+                        </Link>
+                        {" "}({supplement.overlaps.reduce(
+                          (total, overlap) =>
+                            total + overlap.ingredients.length,
+                          0
+                        )} Overlaps)
+                      </h3>
 
-                    <p>
-                      Found in {overlap.supplements.length} current
-                      supplements.
-                    </p>
+                      <ul>
+                        {supplement.overlaps.map((overlap) => (
+                          <li key={overlap.dsldId}>
+                            <p>
+                              Overlaps with:{" "}
+                              <Link 
+                                href={`/supplements/${overlap.dsldId}`} 
+                                className="overlapSupplementName">
+                                {overlap.fullName}
+                              </Link>
+                            </p>
 
-                    <ul>
-                      {overlap.supplements.map((item) => (
-                        <li key={item.dsldId}>
-                          <Link href={`/supplements/${item.dsldId}`}>
-                            {item.fullName}
-                          </Link>
-                          {item.quantity !== null &&
-                          item.quantity !== undefined
-                            ? ` — ${item.quantity}${item.unit ? ` ${item.unit}` : ""}`
-                            : ""}
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
+                            <p>
+                              Ingredients: {overlap.ingredients.join(", ")}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
         </section>
 
-        <section>
+        <section className="dashboardSection">
           <h2>Current Supplements</h2>
-
           {currentSupplements.length === 0 ? (
             <p>No current supplements yet.</p>
           ) : (
@@ -397,69 +412,67 @@ export default function Dashboard(props) {
           )}
         </section>
 
-        <section>
+        <section className="dashboardSection">
           <h2>Saved Supplement Overlaps</h2>
 
-          {savedOverlaps.length === 0 ? (
-            <p>
-              No overlapping ingredients detected between your
-              saved and current supplements.
-            </p>
-          ) : (
-            <ul>
-              {savedOverlaps.map((savedSupplement) => (
-                <li key={savedSupplement.dsldId}>
-                  <h3>
-                    <Link
-                      href={`/supplements/${savedSupplement.dsldId}`}
-                    >
-                      {savedSupplement.fullName}
-                    </Link>
-                  </h3>
+          <div className="overlapCard">
+            {savedOverlaps.length === 0 ? (
+              <p className="overlapStatus success">
+                <span className="statusIcon">✓</span>
+                No overlapping ingredients detected between your
+                saved and current supplements.
+              </p>
+            ) : (
+              <>
+                <p className="overlapSummary">
+                  <span className="statusIcon warning">⚠</span>
+                  <span>
+                  Saved supplements share ingredients with current supplements.
+                  </span>
+                </p>
 
-                  <p>
-                    Shares ingredients with your current
-                    supplements:
-                  </p>
+                <ul className="overlapDetails">
+                  {savedOverlaps.map((supplement) => (
+                    <li key={supplement.dsldId}>
+                      <h3>
+                        <Link href={`/supplements/${supplement.dsldId}`}>
+                          {supplement.fullName}
+                        </Link>
+                        {" "}({supplement.overlaps.reduce(
+                          (total, overlap) =>
+                            total + overlap.ingredients.length,
+                          0
+                        )} Overlaps)
+                      </h3>
 
-                  <ul>
-                    {savedSupplement.overlaps.map((overlap) => (
-                      <li
-                        key={normalizeIngredientName(overlap.name)}
-                      >
-                        <strong>{overlap.name}</strong>
-
-                        {overlap.savedQuantity !== null &&
-                        overlap.savedQuantity !== undefined
-                          ? ` — Saved supplement: ${overlap.savedQuantity}${overlap.savedUnit ? ` ${overlap.savedUnit}` : ""}`
-                          : ""}
-
-                        <ul>
-                          {overlap.currentSupplements.map((item) => (
-                            <li key={item.dsldId}>
-                              Also found in{" "}
-                              <Link
-                                href={`/supplements/${item.dsldId}`}
-                              >
-                                {item.fullName}
+                      <ul>
+                        {supplement.overlaps.map((overlap) => (
+                          <li key={overlap.dsldId}>
+                            <p>
+                              Overlaps with:{" "}
+                              <Link 
+                                href={`/supplements/${overlap.dsldId}`} 
+                                className="overlapSupplementName">
+                                {overlap.fullName}
                               </Link>
-                              {item.quantity !== null &&
-                              item.quantity !== undefined
-                                ? ` — ${item.quantity}${item.unit ? ` ${item.unit}` : ""}`
-                                : ""}
-                            </li>
-                          ))}
-                        </ul>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
-          )}
+                            </p>
+
+                            <p>
+                              Ingredients: {overlap.ingredients.join(", ")}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
         </section>
 
-        <section>
+
+        <section className="dashboardSection">
           <h2>Saved Supplements</h2>
 
           {savedSupplements.length === 0 ? (
@@ -470,10 +483,6 @@ export default function Dashboard(props) {
             </ul>
           )}
         </section>
-
-        <p>
-          <Link href="/">Search Supplements</Link>
-        </p>
 
         <p>
           <strong>Disclaimer:</strong> Overlap warnings identify shared ingredients only—they do not assess safety.

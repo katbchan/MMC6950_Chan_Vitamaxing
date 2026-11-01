@@ -211,7 +211,14 @@ export default function Home(props) {
                       className={styles.resultCard}
                     >
                       <div className={styles.productImage}>
-                        Product image
+                        <img
+                          src={`https://dsldapi.od.nih.gov/s3/pdf/thumbnails/${result._id}.jpg`}
+                          alt={result._source.fullName}
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                            e.currentTarget.parentElement.textContent = "Product image unavailable";
+                          }}
+                        />
                       </div>
 
                       <div className={styles.resultInfo}>
