@@ -62,7 +62,6 @@ export default function Home(props) {
   async function handleAddSupplement(result, status) {
     const supplementId = result._id;
 
-    // If signed out, show a login prompt instead of calling the API.
     if (!props.isLoggedIn) {
       setAddFeedback((previous) => ({
         ...previous,
@@ -143,155 +142,167 @@ export default function Home(props) {
         username={props.username}
       />
 
-      <main className="pageContent">
-        <h1>Search for Supplements</h1>
-
-        <p>Find supplements, see ingredients, and keep track of what’s in your routine.</p>
-
-        <form onSubmit={handleSearch} className={styles.searchForm}>
-          <div className={styles.searchInputWrapper}>
-            <span className={styles.searchIcon} aria-hidden="true">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="10.5" cy="10.5" r="7.5" />
-                <path d="m16 16 5 5" />
-              </svg>
-            </span>
-
-            <input
-              type="text"
-              className={styles.searchInput}
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search by supplement name or brand..."
-              aria-label="Search by supplement name or brand"
-            />
+      <main className={`pageContent ${styles.homeContainer}`}>
+        <section className={styles.homeHero}>
+          <div className={styles.heroImage}></div>
+          <div className={styles.heroText}>
+            <h1>Your supplements, simplified.</h1>
+            <p>
+              Keep track of your supplements, explore their ingredients,
+              and identify overlapping ingredients to better understand
+              your daily routine.
+            </p>
           </div>
-
-          <button type="submit" className={`buttonPrimary ${styles.searchButton}`}>
-            Search
-          </button>
-        </form>
-
-        
-        <section className={styles.searchResults}>
-          <h2>Search Results</h2>
-
-          {loading && <p>Searching...</p>}
-
-          {error && <p role="alert">{error}</p>}
-
-          {!loading && !error && results.length === 0 && (
-            <p>No supplements searched yet.</p>
-          )}
-
-          {results.length > 0 && (
-            <>
-              <p className={styles.resultsSummary}>
-                Showing results for “{searchTerm}”
-              </p>
-
-              <div className={styles.resultsList}>
-                {results.map((result) => {
-                  const supplementId = result._id;
-                  const feedback = addFeedback[supplementId];
-                  const isAdding = !!adding[supplementId];
-
-                  return (
-                    <article
-                      key={supplementId}
-                      className={styles.resultCard}
-                    >
-                      <div className={styles.productImage}>
-                        <img
-                          src={`https://dsldapi.od.nih.gov/s3/pdf/thumbnails/${result._id}.jpg`}
-                          alt={result._source.fullName}
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                            e.currentTarget.parentElement.textContent = "Product image unavailable";
-                          }}
-                        />
-                      </div>
-
-                      <div className={styles.resultInfo}>
-                        <h3 className={styles.resultTitle}>
-                          <Link href={`/supplements/${supplementId}`}>
-                            {result._source.fullName}
-                          </Link>
-                        </h3>
-
-                        <p>
-                          <strong>Brand:</strong>{" "}
-                          {result._source.brandName || "Not available"}
-                        </p>
-
-                        <p>
-                          <strong>Form:</strong>{" "}
-                          {result._source.physicalState?.langualCodeDescription ||
-                            "Not available"}
-                        </p>
-                      </div>
-
-                      <div className={styles.resultActions}>
-                        <button
-                          type="button"
-                          className={`buttonPrimary ${styles.addCurrentButton}`}
-                          onClick={() =>
-                            handleAddSupplement(result, "current")
-                          }
-                          disabled={isAdding}
-                        >
-                          {isAdding ? "Adding..." : "Add to Current"}
-                        </button>
-
-                        <button
-                          type="button"
-                          className={`buttonSecondary ${styles.addSavedButton}`}
-                          onClick={() =>
-                            handleAddSupplement(result, "saved")
-                          }
-                          disabled={isAdding}
-                        >
-                          {isAdding ? "Adding..." : "Add to Saved"}
-                        </button>
-
-                        {feedback && (
-                          <p
-                            className={
-                              feedback.type === "error"
-                                ? styles.feedbackError
-                                : styles.feedbackMessage
-                            }
-                            role={
-                              feedback.type === "error" ? "alert" : "status"
-                            }
-                          >
-                            {feedback.type === "login" ? (
-                              <>
-                                Please <Link href="/login">log in</Link> to add supplement to your list.
-                              </>
-                            ) : (
-                              feedback.message
-                            )}
-                          </p>
-                        )}
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </>
-          )}
         </section>
 
+        <section className={styles.searchSection}>
+          <h1>Search for Supplements</h1>
+
+          <p>Find supplements, see ingredients, and keep track of what’s in your routine.</p>
+
+          <form onSubmit={handleSearch} className={styles.searchForm}>
+            <div className={styles.searchInputWrapper}>
+              <span className={styles.searchIcon} aria-hidden="true">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="10.5" cy="10.5" r="7.5" />
+                  <path d="m16 16 5 5" />
+                </svg>
+              </span>
+
+              <input
+                type="text"
+                className={styles.searchInput}
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search by supplement name or brand..."
+                aria-label="Search by supplement name or brand"
+              />
+            </div>
+
+            <button type="submit" className={`buttonPrimary ${styles.searchButton}`}>
+              Search
+            </button>
+          </form>
+          
+          <section className={styles.searchResults}>
+            <h2>Search Results</h2>
+
+            {loading && <p>Searching...</p>}
+
+            {error && <p role="alert">{error}</p>}
+
+            {!loading && !error && results.length === 0 && (
+              <p>No supplements searched yet.</p>
+            )}
+
+            {results.length > 0 && (
+              <>
+                <p className={styles.resultsSummary}>
+                  Showing results for “{searchTerm}”
+                </p>
+
+                <div className={styles.resultsList}>
+                  {results.map((result) => {
+                    const supplementId = result._id;
+                    const feedback = addFeedback[supplementId];
+                    const isAdding = !!adding[supplementId];
+
+                    return (
+                      <article
+                        key={supplementId}
+                        className={styles.resultCard}
+                      >
+                        <div className={styles.productImage}>
+                          <img
+                            src={`https://dsldapi.od.nih.gov/s3/pdf/thumbnails/${result._id}.jpg`}
+                            alt={result._source.fullName}
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                              e.currentTarget.parentElement.textContent = "Product image unavailable";
+                            }}
+                          />
+                        </div>
+
+                        <div className={styles.resultInfo}>
+                          <h3 className={styles.resultTitle}>
+                            <Link href={`/supplements/${supplementId}`}>
+                              {result._source.fullName}
+                            </Link>
+                          </h3>
+
+                          <p>
+                            <strong>Brand:</strong>{" "}
+                            {result._source.brandName || "Not available"}
+                          </p>
+
+                          <p>
+                            <strong>Form:</strong>{" "}
+                            {result._source.physicalState?.langualCodeDescription ||
+                              "Not available"}
+                          </p>
+                        </div>
+
+                        <div className={styles.resultActions}>
+                          <button
+                            type="button"
+                            className={`buttonPrimary ${styles.addCurrentButton}`}
+                            onClick={() =>
+                              handleAddSupplement(result, "current")
+                            }
+                            disabled={isAdding}
+                          >
+                            {isAdding ? "Adding..." : "Add to Current"}
+                          </button>
+
+                          <button
+                            type="button"
+                            className={`buttonSecondary ${styles.addSavedButton}`}
+                            onClick={() =>
+                              handleAddSupplement(result, "saved")
+                            }
+                            disabled={isAdding}
+                          >
+                            {isAdding ? "Adding..." : "Add to Saved"}
+                          </button>
+
+                          {feedback && (
+                            <p
+                              className={
+                                feedback.type === "error"
+                                  ? styles.feedbackError
+                                  : styles.feedbackMessage
+                              }
+                              role={
+                                feedback.type === "error" ? "alert" : "status"
+                              }
+                            >
+                              {feedback.type === "login" ? (
+                                <>
+                                  Please <Link href="/login">log in</Link> to add supplement to your list.
+                                </>
+                              ) : (
+                                feedback.message
+                              )}
+                            </p>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </section>
+        </section>
       </main>
     </>
   );

@@ -1,3 +1,42 @@
+.homeContainer {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 25px;
+  background-color: #f4e5d3;
+}
+
+.homeHero {
+  position: relative;
+  min-height: 350px;
+  display: flex;
+  align-items: center;
+  padding: 40px 55px;
+  overflow: hidden;
+}
+
+.heroImage {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/hero-green-bg-spoons.jpeg");
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.heroText {
+  position: relative;
+  z-index: 1;
+  max-width: 48%;
+}
+
+.searchSection {
+  padding: 30px 4%;
+  background-color: #f4e5d3;
+}
+
 .searchForm {
   display: flex;
   width: 100%;
