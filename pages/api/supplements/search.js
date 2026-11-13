@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(
-      `https://dsld-dev-api.app.cloud.gov/api/v9/browse-products/?method=by_keyword&q=${encodeURIComponent(q)}`
+      `https://dsld-dev-api.app.cloud.gov/api/v9/search-filter?q=${encodeURIComponent(q)}`
     );
 
     if (!response.ok) {
