@@ -229,7 +229,14 @@ export default function Dashboard(props) {
     return (
       <li className="supplementCard" key={supplement.dsldId}>
         <div className="supplementInfo">
-          <h3>{supplement.fullName}</h3>
+          <h3>
+            <Link
+              href={`/supplements/${supplement.dsldId}`}
+              className="supplementLink"
+            >
+              {supplement.fullName}
+            </Link>
+          </h3>
 
           <p>
             Brand: {supplement.brandName || "Not available"}
@@ -365,7 +372,9 @@ export default function Dashboard(props) {
                   {currentOverlaps.map((supplement) => (
                     <li key={supplement.dsldId}>
                       <h3>
-                        <Link href={`/supplements/${supplement.dsldId}`}>
+                        <Link href={`/supplements/${supplement.dsldId}`}
+                        className="overlapSupplementName"
+                        >
                           {supplement.fullName}
                         </Link>
                         {" "}({supplement.overlaps.reduce(
@@ -435,7 +444,8 @@ export default function Dashboard(props) {
                   {savedOverlaps.map((supplement) => (
                     <li key={supplement.dsldId}>
                       <h3>
-                        <Link href={`/supplements/${supplement.dsldId}`}>
+                        <Link href={`/supplements/${supplement.dsldId}`}
+                        className="overlapSupplementName">
                           {supplement.fullName}
                         </Link>
                         {" "}({supplement.overlaps.reduce(

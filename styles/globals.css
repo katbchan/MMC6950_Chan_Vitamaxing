@@ -153,6 +153,15 @@ select {
   color: #e38226;
 }
 
+.supplementLink {
+  color: #f04438;
+  text-decoration: none;
+}
+
+.supplementLink:hover {
+  text-decoration: underline;
+}
+
 .supplementDetails {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -383,6 +392,10 @@ select {
 .overlapSupplementName {
   color: #e43d32;
   text-decoration: none;
+}
+
+.overlapSupplementName:hover {
+  text-decoration: underline;
 }
 
 .dashboardSection > ul {

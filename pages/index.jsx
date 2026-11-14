@@ -158,7 +158,7 @@ export default function Home(props) {
         <section className={styles.searchSection}>
           <h1>Search for Supplements</h1>
 
-          <p>Find supplements, see ingredients, and keep track of what’s in your routine.</p>
+          <p>Search by supplement name or brand to explore supplement details.</p>
 
           <form onSubmit={handleSearch} className={styles.searchForm}>
             <div className={styles.searchInputWrapper}>
@@ -183,8 +183,8 @@ export default function Home(props) {
                 className={styles.searchInput}
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Search by supplement name or brand..."
-                aria-label="Search by supplement name or brand"
+                placeholder="Enter a supplement name or brand..."
+                aria-label="Enter a supplement name or brand"
               />
             </div>
 

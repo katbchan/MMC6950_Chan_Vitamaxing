@@ -1,7 +1,7 @@
 .homeContainer {
   padding: 0;
   overflow: hidden;
-  border-radius: 25px;
+  border-radius: 25px 25px 0 0;
   background-color: #f4e5d3;
 }
 
@@ -30,6 +30,10 @@
   position: relative;
   z-index: 1;
   max-width: 48%;
+  background-color: rgba(255, 248, 238, 0.40);
+  padding: 24px 28px;
+  border-radius: 16px;
+  backdrop-filter: blur(4px);
 }
 
 .searchSection {
@@ -201,6 +205,23 @@
 }
 
 @media (max-width: 640px) {
+   .homeHero {
+    padding: 40px 28px;
+  }
+
+  .heroText {
+    max-width: 80%;
+  }
+
+  .heroText h1 {
+    font-size: 32px;
+  }
+
+  .heroText p {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
   .searchForm {
     min-height: 54px;
     margin-top: 20px;
