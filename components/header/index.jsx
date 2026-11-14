@@ -33,6 +33,8 @@ export default function Header(props) {
         <img
           src="/Vitamaxing_Logo.png"
           alt="Vitamaxing"
+          width={262}
+          height={56}
           className={styles.logo}
         />
       </Link>

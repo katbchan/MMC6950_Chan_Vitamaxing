@@ -144,7 +144,11 @@ export default function Home(props) {
 
       <main className={`pageContent ${styles.homeContainer}`}>
         <section className={styles.homeHero}>
-          <div className={styles.heroImage}></div>
+          <img
+            src="/hero-green-bg-spoons-reduced.webp"
+            alt=""
+            className={styles.heroImage}
+          />
           <div className={styles.heroText}>
             <h1>Your supplements, simplified.</h1>
             <p>
