@@ -481,5 +481,9 @@ footer {
   .statusIcon {
     font-size: 28px;
   }
+
+  footer {
+    margin: 0 12px;
+  }
 }
 
