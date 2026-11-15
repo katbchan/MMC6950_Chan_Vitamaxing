@@ -18,6 +18,10 @@ function MyApp({ Component, pageProps }) {
       </Head>
 
       <Component {...pageProps} />
+
+      <footer>
+        <p>© {new Date().getFullYear()} Vitamaxing. All rights reserved.</p>
+      </footer>
     </>
   );
 }

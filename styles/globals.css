@@ -421,6 +421,15 @@ select {
   font-size: 30px;
 }
 
+footer {
+  margin: 0 24px;
+  padding: 1px;
+  text-align: center;
+  font-size: 13px;
+  color: #e43d32;
+  background-color: #f2e4d4;
+}
+
 @media (max-width: 640px) {
   .pageContent {
     margin: 0 12px;
