@@ -127,48 +127,49 @@ export default function SupplementDetails(props) {
         {!loading && !error && supplement && (
           <>
             <div className="supplementDetails">
-              <div className="productImage">
-                <img
-                  src={`https://dsldapi.od.nih.gov/s3/pdf/thumbnails/${supplement.id}.jpg`}
-                  alt={supplement.fullName}
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                    e.currentTarget.nextElementSibling.style.display = "flex";
-                  }}
-                />
-
-                <div
-                    className="imagePlaceholder"
-                    style={{ display: "none" }}
-                >
-                    Product image unavailable
-                </div>
-            </div>
-              
               <h2 className="supplementTitle">{supplement.fullName}</h2>
+              <div className="productOverview">
+                <div className="productImage">
+                  <img
+                    src={`https://dsldapi.od.nih.gov/s3/pdf/thumbnails/${supplement.id}.jpg`}
+                    alt={supplement.fullName}
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                      e.currentTarget.nextElementSibling.style.display = "flex";
+                    }}
+                  />
 
-              <section className="detailCard productInfo">
-                <h3>Product Information</h3>
+                  <div
+                      className="imagePlaceholder"
+                      style={{ display: "none" }}
+                  >
+                      Product image unavailable
+                  </div>
+                </div>
 
-                <p>
-                  <strong>Brand:</strong> {supplement.brandName || "Not available"}
-                </p>
+                <section className="productInfo">
+                  <h3>Product Information</h3>
 
-                <p>
-                  <strong>Serving Size:</strong>{" "}
-                  {servingSize
-                    ? `${servingSize.minQuantity}${
-                        servingSize.unit ? ` ${servingSize.unit}` : ""
-                      }${servingSize.notes ? ` (${servingSize.notes})` : ""}`
-                    : "Not available"}
-                </p>
+                  <p>
+                    <strong>Brand:</strong> {supplement.brandName || "Not available"}
+                  </p>
 
-                <p>
-                  <strong>Form:</strong>{" "}
-                  {supplement.physicalState?.langualCodeDescription ||
-                    "Not available"}
-                </p>
-              </section>
+                  <p>
+                    <strong>Serving Size:</strong>{" "}
+                    {servingSize
+                      ? `${servingSize.minQuantity}${
+                          servingSize.unit ? ` ${servingSize.unit}` : ""
+                        }${servingSize.notes ? ` (${servingSize.notes})` : ""}`
+                      : "Not available"}
+                  </p>
+
+                  <p>
+                    <strong>Form:</strong>{" "}
+                    {supplement.physicalState?.langualCodeDescription ||
+                      "Not available"}
+                  </p>
+                </section>
+              </div>
 
               <section className="detailCard ingredientsCard">
                 <h3>Ingredients</h3>

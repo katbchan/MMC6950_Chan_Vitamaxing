@@ -170,31 +170,41 @@ select {
 
 .supplementTitle {
   grid-column: 1 / -1;
+  margin-bottom: 0;
 }
 
-.productImage {
-  grid-column: 1;
-  grid-row: 2;
+.productOverview {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  align-items: center;
+  gap: 20px;
   background-color: #ffffff;
   border: 1px solid #49832e;
   border-radius: 12px;
   padding: 24px;
+}
+
+.productImage {
+  background-color: transparent;
+  border: none;
+  padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .productImage img {
-  width: 100%;
-  max-width: 250px;
+  width: 250px;
   height: 250px;
+  max-width: 100%;
   object-fit: contain;
 }
 
 .imagePlaceholder {
-  width: 100%;
-  max-width: 250px;
+  width: 250px;
   height: 250px;
+  max-width: 100%;
   background-color: #f2e4d4;
   border-radius: 12px;
   display: flex;
@@ -206,19 +216,18 @@ select {
 }
 
 .productInfo {
-  grid-column: 2;
-  grid-row: 2;
+  background-color: transparent;
+  border: none;
+  padding: 0;
 }
 
 .ingredientsCard {
   grid-column: 1;
-  grid-row: 3;
 }
 
 
 .otherIngredientsCard {
   grid-column: 2;
-  grid-row: 3;
 }
 
 .addSupplementCard {
@@ -462,6 +471,30 @@ footer {
   .addSupplementCard {
     grid-column: 1;
     grid-row: auto;
+  }
+
+  .productOverview {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .productImage img,
+  .imagePlaceholder {
+    width: 220px;
+    height: 220px;
+    max-width: 100%;
+  }
+
+  .productInfo {
+    width: 100%;
+  }
+
+  .addSupplementButtons {
+    grid-template-columns: 1fr;
+  }
+
+  .addSupplementButtons button {
+    width: 100%;
   }
 
   .supplementCard {
